@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { ShoppingCart, Heart } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
+import { WishlistContext } from "../context/WishlistContext";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
-  const [cart, setCart] = useState(() => {
-    const storedCart = localStorage.getItem("cart");
-    return storedCart ? JSON.parse(storedCart) : [];
-  });
 
   useEffect(() => {
     axios
@@ -18,25 +18,24 @@ export default function ProductsPage() {
       .catch((err) => console.log(err));
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+  const navigate = useNavigate();
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase()),
   );
 
+  //cart
+
+  const { cart, addToCart } = useContext(CartContext);
+
   const handleAddToCart = (product) => {
-    const alreadyExists = cart.find((item) => item.id === product.id);
+    const added = addToCart(product);
+  };
 
-    if (alreadyExists) {
-      alert("Product already in cart");
-      return;
-    }
-
-    setCart([...cart, product]);
-
-    alert("Product added to cart");
+  //wishlist
+  const { wishlist, addToWishlist } = useContext(WishlistContext);
+  const handleWishlist = (product) => {
+    addToWishlist(product);
   };
 
   return (
@@ -97,11 +96,28 @@ export default function ProductsPage() {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="flex-1 flex items-center justify-center bg-gray-100 text-gray-800 font-medium py-2 rounded-lg"
+                    disabled={cart.some((item) => item.id === product.id)}
+                    className={`flex-1 flex items-center justify-center font-medium py-2 rounded-lg ${
+                      cart.some((item) => item.id === product.id)
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
                   >
-                    <ShoppingCart size={18} className="mr-2" /> Add To Cart
+                    <ShoppingCart size={18} className="mr-2" />
+
+                    {cart.some((item) => item.id === product.id)
+                      ? "Added"
+                      : "Add To Cart"}
                   </button>
-                  <button className="flex items-center justify-center bg-red-50 text-red-500 font-medium p-2 w-12 rounded-lg">
+                  <button
+                    onClick={() => handleWishlist(product)}
+                    disabled={wishlist.some((item) => item.id === product.id)}
+                    className={`flex items-center justify-center font-medium p-2 w-12 rounded-lg ${
+                      wishlist.some((item) => item.id === product.id)
+                        ? "bg-red-500 text-white cursor-not-allowed"
+                        : "bg-red-50 text-red-500"
+                    }`}
+                  >
                     <Heart size={20} />
                   </button>
                 </div>

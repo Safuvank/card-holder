@@ -10,9 +10,16 @@ import {
 
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
+import { WishlistContext } from "../context/WishlistContext";
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
+  const { cart, addToCart } = useContext(CartContext);
+
+  const navigate = useNavigate();
 
   const [productData, setProductData] = useState(null);
 
@@ -31,7 +38,16 @@ export default function ProductDetailsPage() {
     return <h1 className="text-center mt-10">Loading...</h1>;
   }
 
+  const handleAddToCart = () => {
+    const added = addToCart(productData);
+  };
+
   const savedAmount = productData.mrp - productData.offerPrice;
+
+  const { wishlist, addToWishlist } = useContext(WishlistContext);
+  const handleWishlist = (product) => {
+    addToWishlist(product);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 font-sans">
@@ -119,9 +135,20 @@ export default function ProductDetailsPage() {
 
           {/* BUTTONS */}
           <div className="pt-6 border-t flex space-x-4">
-            <button className="flex-1 bg-blue-600 text-white font-semibold py-3.5 rounded-xl flex items-center justify-center">
+            <button
+              onClick={handleAddToCart}
+              disabled={cart.some((item) => item.id === productData.id)}
+              className={`flex-1 font-semibold py-3.5 rounded-xl flex items-center justify-center ${
+                cart.some((item) => item.id === productData.id)
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-blue-600 text-white"
+              }`}
+            >
               <ShoppingBag size={20} className="mr-2" />
-              Add to Cart
+
+              {cart.some((item) => item.id === productData.id)
+                ? "Added to Cart"
+                : "Add to Cart"}
             </button>
 
             <button className="px-4 py-3.5 border rounded-xl">

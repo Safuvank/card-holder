@@ -6,30 +6,19 @@ import {
   ShieldCheck,
   MapPin,
 } from "lucide-react";
-import { useLocation } from "react-router-dom";
-
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
+import { Link } from "react-router-dom";
 
 export default function CheckoutPage() {
-  const location = useLocation();
+  const { cart } = useContext(CartContext);
 
-  const product = location.state?.product;
-  console.log(product);
-
-  const cartItems = product
-    ? [
-        {
-          ...product,
-          quantity: 1,
-        },
-      ]
-    : [];
-
-  const totalMRP = cartItems.reduce(
+  const totalMRP = cart.reduce(
     (acc, item) => acc + item.mrp * item.quantity,
     0,
   );
 
-  const finalPayable = cartItems.reduce(
+  const finalPayable = cart.reduce(
     (acc, item) => acc + item.offerPrice * item.quantity,
     0,
   );
@@ -51,11 +40,11 @@ export default function CheckoutPage() {
           {/* Product Listing Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
-              Product Listing ({cartItems.length} Items)
+              Product Listing ({cart.length} Items)
             </h3>
 
             <ul className="divide-y divide-gray-100">
-              {cartItems.map((item) => (
+              {cart.map((item) => (
                 <li
                   key={item.id}
                   className="py-4 flex items-start space-x-4 first:pt-0 last:pb-0"
@@ -92,7 +81,7 @@ export default function CheckoutPage() {
             </h3>
 
             <ul className="divide-y divide-gray-100">
-              {cartItems.map((item) => (
+              {cart.map((item) => (
                 <li
                   key={item.id}
                   className="py-4 flex items-start space-x-4 first:pt-0 last:pb-0"
@@ -103,7 +92,7 @@ export default function CheckoutPage() {
                     </h4>
 
                     <h4 className="text-blue-600 font-semibold whitespace-nowrap">
-                      ₹150
+                      ₹{(item.mrp - item.offerPrice) * item.quantity}
                     </h4>
 
                     <h4 className="text-green-600 font-semibold whitespace-nowrap">
@@ -154,10 +143,11 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            
-            <button className="w-full mt-6 bg-blue-600 text-white font-semibold py-3 rounded-xl shadow-md transition-all ">
-              Place Order
-            </button>
+            <Link to="/addressandpayment">
+              <button className="w-full mt-6 bg-blue-600 text-white font-semibold py-3 rounded-xl shadow-md transition-all ">
+                Place Order
+              </button>
+            </Link>
           </div>
         </div>
       </div>
