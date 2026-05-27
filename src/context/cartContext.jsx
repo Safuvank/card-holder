@@ -33,9 +33,7 @@ export default function CartProvider({ children }) {
   };
 
   const removeFromCart = (id) => {
-    const updatedCart = cart.filter((item) => item.id !== id);
-
-    setCart(updatedCart);
+    setCart(cart.filter((item) => item.id !== id));
   };
 
   const increaseQuantity = (id) => {
@@ -73,7 +71,7 @@ export default function CartProvider({ children }) {
         addToCart,
         removeFromCart,
         increaseQuantity,
-        decreaseQuantity
+        decreaseQuantity,
       }}
     >
       {children}

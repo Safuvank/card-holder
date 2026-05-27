@@ -211,7 +211,7 @@ export default function AddressandPayment() {
             {isPaymentSuccessful ? (
               <div className="bg-green-50 border border-green-200 text-green-800 rounded-xl p-4 flex items-center space-x-3">
                 <CheckCircle2
-                  className="text-green-600 flex-shrink-0"
+                  className="text-green-600 shrink-0"
                   size={24}
                 />
                 <div>
@@ -308,19 +308,19 @@ export default function AddressandPayment() {
             {/* Total Value Overview Display block */}
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 mb-6 space-y-2">
               <div className="flex justify-between text-sm text-gray-600">
-                <span>Total Items Gross Cost</span>
+                <span>Subtotal</span>
                 <span className="font-semibold text-gray-900">₹{totalMRP}</span>
               </div>
               <div className="flex justify-between text-sm text-green-600">
-                <span>Calculated Offers Savings</span>
+                <span>Total Savings</span>
                 <span className="font-semibold">-₹{totalOffers}</span>
               </div>
               <div className="pt-2 border-t border-gray-200 flex justify-between items-baseline">
                 <span className="text-sm font-bold text-gray-900">
-                  Final Order Total
+                  Total
                 </span>
                 <span className="text-xl font-extrabold text-blue-600">
-                 ₹{finalPayable}
+                  ₹{finalPayable}
                 </span>
               </div>
             </div>
@@ -336,7 +336,7 @@ export default function AddressandPayment() {
                   : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
               }`}
             >
-              Confirm Order & Finalize
+              Confirm Order
             </button>
 
             <div className="mt-4 flex items-center justify-center space-x-1.5 text-xs text-gray-400">

@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   Truck,
   RotateCcw,
+  ShoppingCart,
 } from "lucide-react";
 
 import { useParams } from "react-router-dom";
@@ -17,7 +18,7 @@ import { WishlistContext } from "../context/WishlistContext";
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
-  const { cart, addToCart } = useContext(CartContext);
+  const { cart, addToCart, removeFromCart } = useContext(CartContext);
 
   const navigate = useNavigate();
 
@@ -38,16 +39,30 @@ export default function ProductDetailsPage() {
     return <h1 className="text-center mt-10">Loading...</h1>;
   }
 
-  const handleAddToCart = () => {
-    const added = addToCart(productData);
+  const handleAddToCart = (product) => {
+    const exists = cart.some((item) => item.id === product.id);
+
+    if (exists) {
+      removeFromCart(product.id);
+    } else {
+      addToCart(product);
+    }
+  };
+
+  const { wishlist, addToWishlist, removeFromWishlist } =
+    useContext(WishlistContext);
+
+  const handleWishlist = (product) => {
+    const exists = wishlist.some((item) => item.id === product.id);
+
+    if (exists) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
   };
 
   const savedAmount = productData.mrp - productData.offerPrice;
-
-  const { wishlist, addToWishlist } = useContext(WishlistContext);
-  const handleWishlist = (product) => {
-    addToWishlist(product);
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 font-sans">
@@ -134,27 +149,69 @@ export default function ProductDetailsPage() {
           </div>
 
           {/* BUTTONS */}
-          <div className="pt-6 border-t flex space-x-4">
+          {/* <div className="pt-6 border-t flex space-x-4">
             <button
-              onClick={handleAddToCart}
-              disabled={cart.some((item) => item.id === productData.id)}
-              className={`flex-1 font-semibold py-3.5 rounded-xl flex items-center justify-center ${
+              onClick={() => handleAddToCart(productData)}
+              className={`flex-1 flex items-center justify-center font-medium py-2 rounded-lg ${
                 cart.some((item) => item.id === productData.id)
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-blue-600 text-white"
+                  ? "  bg-gray-100 text-gray-800"
+                  : "bg-emerald-500 text-white"
               }`}
             >
-              <ShoppingBag size={20} className="mr-2" />
+              <ShoppingCart size={18} className="mr-2" />
 
               {cart.some((item) => item.id === productData.id)
-                ? "Added to Cart"
-                : "Add to Cart"}
+                ? "Added To Cart"
+                : "Add To Cart"}
             </button>
 
-            <button className="px-4 py-3.5 border rounded-xl">
+            <button
+              onClick={() => handleWishlist(productData)}
+              className={`px-4 py-3.5 rounded-xl transition-all duration-300 ${
+                wishlist.some((item) => item.id === productData.id)
+                  ? "bg-red-500 text-white"
+                  : "border text-gray-700"
+              }`}
+            >
               <Heart size={22} />
             </button>
-          </div>
+          </div> */}
+<div className="pt-6 border-t flex flex-nowrap items-center gap-4">
+
+  {/* Buy Now */}
+  <button className="flex-1 bg-blue-600 text-white font-medium py-3 rounded-lg">
+    Buy Now
+  </button>
+
+  {/* Add To Cart */}
+  <button
+    onClick={() => handleAddToCart(productData)}
+    className={`flex-1 flex items-center justify-center font-medium py-3 rounded-lg ${
+      cart.some((item) => item.id === productData.id)
+        ? "bg-gray-100 text-gray-800"
+        : "bg-emerald-500 text-white"
+    }`}
+  >
+    <ShoppingCart size={18} className="mr-2" />
+
+    {cart.some((item) => item.id === productData.id)
+      ? "Added To Cart"
+      : "Add To Cart"}
+  </button>
+
+  {/* Wishlist */}
+  <button
+    onClick={() => handleWishlist(productData)}
+    className={`px-4 py-3 rounded-lg ${
+      wishlist.some((item) => item.id === productData.id)
+        ? "bg-red-500 text-white"
+        : "border text-gray-700"
+    }`}
+  >
+    <Heart size={22} />
+  </button>
+
+</div>
         </div>
       </div>
     </div>

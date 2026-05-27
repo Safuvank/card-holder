@@ -39,7 +39,10 @@ export default function CartPage() {
                     </h3>
 
                     <p className="text-gray-600 font-medium">
-                      ₹{item.offerPrice * item.quantity}
+                      ₹{item.offerPrice * item.quantity}{" "}
+                      <span className="text-sm text-gray-500 line-through">
+                        ₹{item.mrp * item.quantity}
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -78,23 +81,40 @@ export default function CartPage() {
               </li>
             ))
           ) : (
-            <div className="p-10 text-center text-gray-500">Cart is empty</div>
+            <div className="p-10 flex flex-col items-center justify-center text-center">
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                Your Cart is Empty
+              </h3>
+
+              <p className="text-gray-500 mb-6">
+                Looks like you haven’t added anything to your cart yet.
+              </p>
+
+              <Link
+                to="/"
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300"
+              >
+                Browse Products
+              </Link>
+            </div>
           )}
         </ul>
 
         {/* Footer */}
-        <div className="p-6 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <span className="text-xl font-bold text-gray-900">
-            Total: ₹{totalPrice}
-          </span>
+        {cart.length > 0 && (
+          <div className="p-6 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <span className="text-xl font-bold text-gray-900">
+              Total: ₹{totalPrice}
+            </span>
 
-          <Link
-            to="/checkout"
-            className="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg text-center"
-          >
-            Proceed to Checkout
-          </Link>
-        </div>
+            <Link
+              to="/checkout"
+              className="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg text-center"
+            >
+              Proceed to Checkout
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

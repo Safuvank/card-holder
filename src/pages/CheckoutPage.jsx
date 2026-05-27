@@ -8,17 +8,26 @@ import {
 } from "lucide-react";
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
-import { Link } from "react-router-dom";
+
+import { Link, useLocation } from "react-router-dom";
 
 export default function CheckoutPage() {
   const { cart } = useContext(CartContext);
 
-  const totalMRP = cart.reduce(
+  const location = useLocation();
+
+  const buyNowProduct = location.state?.product;
+
+  const checkoutItems = buyNowProduct
+    ? [{ ...buyNowProduct, quantity: 1 }]
+    : cart;
+
+  const totalMRP = checkoutItems.reduce(
     (acc, item) => acc + item.mrp * item.quantity,
     0,
   );
 
-  const finalPayable = cart.reduce(
+  const finalPayable = checkoutItems.reduce(
     (acc, item) => acc + item.offerPrice * item.quantity,
     0,
   );
@@ -40,11 +49,12 @@ export default function CheckoutPage() {
           {/* Product Listing Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
-              Product Listing ({cart.length} Items)
+              Product Listing ({checkoutItems.length}{" "}
+              {checkoutItems.length === 1 ? "Item" : "Items"})
             </h3>
 
             <ul className="divide-y divide-gray-100">
-              {cart.map((item) => (
+              {checkoutItems.map((item) => (
                 <li
                   key={item.id}
                   className="py-4 flex items-start space-x-4 first:pt-0 last:pb-0"
@@ -67,6 +77,9 @@ export default function CheckoutPage() {
                       <span className="text-base font-bold text-gray-900">
                         ₹{item.offerPrice * item.quantity}
                       </span>
+                      <span className="text-sm text-gray-500 line-through">
+                        ₹{item.mrp * item.quantity}
+                      </span>
                     </div>
                   </div>
                 </li>
@@ -81,7 +94,7 @@ export default function CheckoutPage() {
             </h3>
 
             <ul className="divide-y divide-gray-100">
-              {cart.map((item) => (
+              {checkoutItems.map((item) => (
                 <li
                   key={item.id}
                   className="py-4 flex items-start space-x-4 first:pt-0 last:pb-0"
@@ -92,7 +105,7 @@ export default function CheckoutPage() {
                     </h4>
 
                     <h4 className="text-blue-600 font-semibold whitespace-nowrap">
-                      ₹{(item.mrp - item.offerPrice) * item.quantity}
+                      Saved ₹{(item.mrp - item.offerPrice) * item.quantity}/-
                     </h4>
 
                     <h4 className="text-green-600 font-semibold whitespace-nowrap">
@@ -115,21 +128,8 @@ export default function CheckoutPage() {
             {/* Price Calculations Breakdown */}
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-gray-600">
-                <span>Total Product Price</span>
+                <span>Subtotal</span>
                 <span className="font-medium">₹{totalMRP}</span>
-              </div>
-
-              <div className="flex justify-between text-gray-600 pt-2">
-                <span>Total Offer</span>
-                <span className="text-green-600 font-medium">
-                  {offerPercentage}%
-                </span>
-              </div>
-
-              {/* Total Savings Highlighting */}
-              <div className="bg-green-50/50 rounded-lg p-3 flex justify-between text-sm text-green-700 font-medium">
-                <span>Your Total Savings</span>
-                <span>₹{totalOffers}</span>
               </div>
 
               {/* Final Payable Price */}
@@ -139,6 +139,28 @@ export default function CheckoutPage() {
                 </span>
                 <span className="text-2xl font-extrabold text-blue-600">
                   ₹{finalPayable}
+                </span>
+              </div>
+
+              {/* Total Savings Highlighting */}
+              <div className="bg-green-50/50 rounded-lg p-3 flex justify-center text-center text-sm text-green-700 font-medium">
+                <span>
+                  You Saved
+                  <span className=" text-green-600 px-2 py-1 rounded-md font-bold">
+                    ₹{totalMRP - finalPayable}
+                  </span>
+                  on This Purchase
+                </span>
+              </div>
+
+              <div className="bg-blue-50/50 rounded-lg p-3 flex justify-center text-center text-sm text-blue-700 font-medium">
+                <span>
+                  <span className="font-bold text-lg">Congratulations!</span>{" "}
+                  <br /> You received a
+                  <span className=" text-blue-700 px-2 py-1 rounded-md font-bold">
+                    {offerPercentage}% OFFER
+                  </span>
+                  total savings on this purchase.
                 </span>
               </div>
             </div>

@@ -26,16 +26,30 @@ export default function ProductsPage() {
 
   //cart
 
-  const { cart, addToCart } = useContext(CartContext);
+  const { cart, addToCart,removeFromCart } = useContext(CartContext);
 
   const handleAddToCart = (product) => {
-    const added = addToCart(product);
+    const exists = cart.some((item) => item.id === product.id);
+
+    if (exists) {
+      removeFromCart(product.id);
+    } else {
+      addToCart(product);
+    }
   };
 
   //wishlist
-  const { wishlist, addToWishlist } = useContext(WishlistContext);
+  const { wishlist, addToWishlist, removeFromWishlist } =
+    useContext(WishlistContext);
+
   const handleWishlist = (product) => {
-    addToWishlist(product);
+    const exists = wishlist.some((item) => item.id === product.id);
+
+    if (exists) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
   };
 
   return (
@@ -96,25 +110,24 @@ export default function ProductsPage() {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleAddToCart(product)}
-                    disabled={cart.some((item) => item.id === product.id)}
                     className={`flex-1 flex items-center justify-center font-medium py-2 rounded-lg ${
                       cart.some((item) => item.id === product.id)
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-gray-100 text-gray-800"
+                        ? " bg-gray-100 text-gray-800"
+                        : "bg-emerald-500 text-white"
                     }`}
                   >
                     <ShoppingCart size={18} className="mr-2" />
 
                     {cart.some((item) => item.id === product.id)
-                      ? "Added"
+                      ? "Added to Cart"
                       : "Add To Cart"}
                   </button>
+                  
                   <button
                     onClick={() => handleWishlist(product)}
-                    disabled={wishlist.some((item) => item.id === product.id)}
                     className={`flex items-center justify-center font-medium p-2 w-12 rounded-lg ${
                       wishlist.some((item) => item.id === product.id)
-                        ? "bg-red-500 text-white cursor-not-allowed"
+                        ? "bg-red-500 text-white"
                         : "bg-red-50 text-red-500"
                     }`}
                   >

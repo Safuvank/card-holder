@@ -19,7 +19,7 @@ export default function Navbar() {
   const { wishlist } = useContext(WishlistContext);
 
   return (
-    <nav className="bg-white border-b border-gray-200 shadow-sm shrink-0 z-50 w-full relative">
+    <nav className="sticky top-0 bg-white border-b border-gray-200 shadow-sm shrink-0 z-50 w-full pt-3 pb-3">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Static Logo Link - Routes to home/products */}
